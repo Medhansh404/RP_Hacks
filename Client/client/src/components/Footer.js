@@ -6,7 +6,7 @@ export const Footer = () => {
       <Container>
         <Row className="align-items-center">
           <Col>
-            <p>Copyright (c) 2024 FRAUDSters</p>
+            <p>Copyright (c) 2024 CyberGuard</p>
           </Col>
         </Row>
       </Container>
