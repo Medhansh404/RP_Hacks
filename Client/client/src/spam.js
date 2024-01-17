@@ -122,10 +122,11 @@ function init() {
   SVM.train(XTrain, yTrain);
 
   const YPredict = SVM.predict(XTest);
-  const trueHits = YPredict.filter((v, i) => v === yTest[i]).length;
-  const accuracy = (trueHits / MTest) * 100;
+//   const trueHits = YPredict.filter((v, i) => v === yTest[i]).length;
+//   const accuracy = (trueHits / MTest) * 100;
 
-  console.log(accuracy);
+  //console.log(accuracy);
+  //console.log(YPredict);
 }
 
 function normalizeUrl(string) {

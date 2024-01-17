@@ -6,7 +6,7 @@ import { url } from '../url';
 import axios from "axios";
 
 export const Main = () => {
-    //const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
     const [oopen, setOOpen] = useState(false);
     const [textareaValue, setTextareaValue] = useState('');
     const [textareaValue2, setTextareaValue2] = useState('');
@@ -35,9 +35,34 @@ export const Main = () => {
         console.log('Submitted Text:', submittedText);
         const smsPredicted = true;
         setSmsPredictionResult(smsPredicted);
-       // setOpen(true); // Set open to true after receiving the SMS prediction result
-        handleReset();
-    };
+        const requestsms = JSON.stringify({ sms_text: submittedText });
+        const server = 'http://localhost:8080/spam'; // Change the port if needed
+    
+        axios.post(server, { sms_text: submittedText }, {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        .then(response => {
+          const isSpam = response.data.isSpam;
+    
+          if (isSpam !== undefined) {
+            setPredictionResult(isSpam ? 1 : -1);
+          } else {
+            console.error('Invalid response format from server');
+          }
+    
+          // Set open to true after receiving the SMS prediction result
+          // Assuming setOpen is a function that sets the state for your modal or alert
+          setOpen(true);
+    
+          // Reset the form input
+          handleReset();
+        })
+        .catch(error => {
+          console.error('Axios error:', error);
+        });
+      };
     
 
     const handleSubmit2 = (e) => {
@@ -205,7 +230,7 @@ export const Main = () => {
     onClick={oopen ? handleCloseButtonClick : () => setOOpen(!oopen)}
     aria-controls="example-collapse-text"
     aria-expanded={oopen}
-    style={{ width: 100, height: 40, background: '#4682A9', borderRadius: 15 }}
+    style={{ width: 100, height: 40,  background: 'linear-gradient(rgb(15,12,32) -5.91%, #9866b7 111.58%)', borderRadius: 15 }}
 >
     {oopen ? "CLOSE" : "DETECT"}
 </Button>
