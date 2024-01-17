@@ -10,7 +10,7 @@ export const Main = () => {
     const [oopen, setOOpen] = useState(false);
     const [textareaValue, setTextareaValue] = useState('');
     const [textareaValue2, setTextareaValue2] = useState('');
-    const [predictionResult, setPredictionResult] = useState(null);
+    const [predictionResult, setPredictionResult] = useState('');
     const [smsPredictionResult, setSmsPredictionResult] = useState(null);
     const [smsOpen, setSmsOpen] = useState(false);
 
@@ -57,7 +57,14 @@ export const Main = () => {
         .then(response => {
             url_domain = response.data.hostname;
             const predicted = url(url_text, url_domain);
-            setPredictionResult(1);
+            if(predicted>=85)
+            {
+                setPredictionResult(1);
+            }
+            else
+            {
+                setPredictionResult(-1);
+            }
            setOOpen(true);
             console.log(predicted);
         })
