@@ -1,2 +1,2 @@
 # RP_Hacks
-The project for financial fraud prevention
+The project for detecting fake websites 
