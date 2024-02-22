@@ -2,7 +2,7 @@
 let decision_tree = function(root) {
     var predictOne = function(x) {
       var node = root;
-      while(node['type'] == 'split') {
+      while(node['type'] === 'split') {
         var threshold = node['threshold'].split(' <= ');
         if(x[threshold[0]] <= threshold[1]) { //Left
           node = node['left'];
@@ -42,9 +42,20 @@ let decision_tree = function(root) {
           positive += pred[p][i][1];
           negative += pred[p][i][0];
         }
-        results.push([positive>=negative, Math.max(positive, negative)]);
+        //console.log(positive + " " + negative);
+        if(positive>0)
+        {
+          results.push([true, Math.max(positive, negative)]);
+        }
+        else
+        {
+          results.push([positive>=negative, Math.max(positive, negative)]);
+        }
       }
+      //console.log(results);
+      
       return results;
+      // console.log(predict);
     }
   
     return {

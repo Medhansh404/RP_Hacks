@@ -10,7 +10,7 @@ export const Main = () => {
     const [oopen, setOOpen] = useState(false);
     const [textareaValue, setTextareaValue] = useState('');
     const [textareaValue2, setTextareaValue2] = useState('');
-    const [predictionResult, setPredictionResult] = useState(null);
+    const [predictionResult, setPredictionResult] = useState('');
     const [smsPredictionResult, setSmsPredictionResult] = useState(null);
     const [smsOpen, setSmsOpen] = useState(false);
 
@@ -35,9 +35,34 @@ export const Main = () => {
         console.log('Submitted Text:', submittedText);
         const smsPredicted = true;
         setSmsPredictionResult(smsPredicted);
-        setOpen(true); // Set open to true after receiving the SMS prediction result
-        handleReset();
-    };
+        const requestsms = JSON.stringify({ sms_text: submittedText });
+        const server = 'http://localhost:8080/spam'; // Change the port if needed
+    
+        axios.post(server, { sms_text: submittedText }, {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        .then(response => {
+          const isSpam = response.data.isSpam;
+    
+          if (isSpam !== undefined) {
+            setPredictionResult(isSpam ? 1 : -1);
+          } else {
+            console.error('Invalid response format from server');
+          }
+    
+          // Set open to true after receiving the SMS prediction result
+          // Assuming setOpen is a function that sets the state for your modal or alert
+          setOpen(true);
+    
+          // Reset the form input
+          handleReset();
+        })
+        .catch(error => {
+          console.error('Axios error:', error);
+        });
+      };
     
 
     const handleSubmit2 = (e) => {
@@ -57,9 +82,17 @@ export const Main = () => {
         .then(response => {
             url_domain = response.data.hostname;
             const predicted = url(url_text, url_domain);
-            setPredictionResult(1);
+            // console.log(predicted.legitimatePercents);
+            // console.log(predicted.predicted_value);
+            if(!predicted)
+            {
+                setPredictionResult(1);
+            }
+            else
+            {
+                setPredictionResult(-1);
+            }
            setOOpen(true);
-            console.log(predicted);
         })
         .catch(error => {
             console.error('Axios error:', error);
@@ -146,7 +179,7 @@ export const Main = () => {
                     onClick={handleCloseButtonClick2}
                     aria-controls="example-collapse-text"
                     aria-expanded={smsOpen}
-                    style={{ width: 100, height: 40, background: '#4682A9', borderRadius: 15 }}
+                    style={{ width: 100, height: 40,  background: 'linear-gradient(rgb(15,12,32) -5.91%, #9866b7 111.58%)', borderRadius: 15 }}
                 >
                     {smsOpen ? "CLOSE" : "DETECT"}
                 </Button>
@@ -165,9 +198,9 @@ export const Main = () => {
                             <div id="example-collapse-text" style={{ marginTop: '20px' }}>
                                 <Card.Title style={{ textAlign: 'center', color: 'black', fontSize: 30, fontFamily: 'Open Sans', fontWeight: '700', wordWrap: 'break-word' }}>WEB FRAUD DETECTON</Card.Title>
                                 {predictionResult === 1 ? (
-                                    <p style={{ textAlign: 'center', color: 'green', fontSize: 20 }}>Safe</p>
+                                    <p style={{ textAlign: 'center', color: 'green', fontSize: 20 }}>This is a Safe Website</p>
                                 ) : predictionResult === -1 ? (
-                                    <p style={{ textAlign: 'center', color: 'red', fontSize: 20 }}>Unsafe</p>
+                                    <p style={{ textAlign: 'center', color: 'red', fontSize: 20 }}>Beware!!! This might be an Unsafe Website</p>
                                 ) : (
                                     <Stack direction="vertical" gap={3}>
                                         <Form.Control
@@ -197,7 +230,7 @@ export const Main = () => {
     onClick={oopen ? handleCloseButtonClick : () => setOOpen(!oopen)}
     aria-controls="example-collapse-text"
     aria-expanded={oopen}
-    style={{ width: 100, height: 40, background: '#4682A9', borderRadius: 15 }}
+    style={{ width: 100, height: 40,  background: 'linear-gradient(rgb(15,12,32) -5.91%, #9866b7 111.58%)', borderRadius: 15 }}
 >
     {oopen ? "CLOSE" : "DETECT"}
 </Button>
